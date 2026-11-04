@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom'
 import Button from '@/components/ui/Button'
 import Container from '@/components/ui/Container'
+import { usePageTitle } from '@/lib/usePageTitle'
 
 export default function NotFound() {
+  usePageTitle('صفحه یافت نشد')
   return (
     <Container className="py-24 text-center">
       <p className="text-6xl font-extrabold text-gold">۴۰۴</p>

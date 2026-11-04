@@ -1,5 +1,5 @@
-import { MailCheck, Send } from 'lucide-react'
-import { useRef, useState } from 'react'
+import { LoaderCircle, MailCheck, Send } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 import Button from '@/components/ui/Button'
 import Container from '@/components/ui/Container'
 import { gsap, useGSAP } from '@/lib/gsap'
@@ -10,6 +10,10 @@ export default function Newsletter() {
   const panelRef = useRef(null)
   const [email, setEmail] = useState('')
   const [subscribed, setSubscribed] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const timer = useRef(null)
+
+  useEffect(() => () => clearTimeout(timer.current), [])
 
   useGSAP(
     () => {
@@ -28,7 +32,13 @@ export default function Newsletter() {
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    if (email.trim()) setSubscribed(true)
+    if (!email.trim() || loading) return
+    setLoading(true)
+    // شبیه‌سازی درخواست ثبت‌نام تا اتصال به سرور
+    timer.current = setTimeout(() => {
+      setLoading(false)
+      setSubscribed(true)
+    }, 900)
   }
 
   return (
@@ -62,7 +72,10 @@ export default function Newsletter() {
             </p>
 
             {subscribed ? (
-              <p className="rounded-full border border-gold/50 bg-gold/15 px-6 py-3 text-sm font-bold text-gold-dark dark:text-gold">
+              <p
+                role="status"
+                className="animate-fade-in rounded-full border border-gold/50 bg-gold/15 px-6 py-3 text-sm font-bold text-gold-dark dark:text-gold"
+              >
                 ✓ عضویت شما با موفقیت ثبت شد؛ خوش آمدید!
               </p>
             ) : (
@@ -78,11 +91,16 @@ export default function Newsletter() {
                   onChange={(event) => setEmail(event.target.value)}
                   placeholder="ایمیل خود را وارد کنید"
                   aria-label="آدرس ایمیل"
+                  disabled={loading}
                   className="h-12 flex-1 rounded-full border border-navy/15 bg-white/80 px-5 text-sm outline-none transition-colors placeholder:text-navy/40 focus:border-gold dark:border-cream/15 dark:bg-navy/50 dark:placeholder:text-cream/40"
                 />
-                <Button type="submit" className="shrink-0 !px-6">
-                  <Send size={16} className="scale-x-[-1]" />
-                  عضویت
+                <Button type="submit" disabled={loading} aria-busy={loading} className="shrink-0 px-6!">
+                  {loading ? (
+                    <LoaderCircle size={16} className="animate-spin" />
+                  ) : (
+                    <Send size={16} className="scale-x-[-1]" />
+                  )}
+                  {loading ? 'در حال ثبت…' : 'عضویت'}
                 </Button>
               </form>
             )}

@@ -8,7 +8,7 @@ import { parallaxY, prefersReducedMotion } from '@/lib/animations'
 import heroProduct from '@/assets/img/products/apple-airpods-max-silver.webp'
 
 const STATS = [
-  { value: '۱۲هزار+', label: 'مشتری وفادار' },
+  { value: '۱۲ هزار+', label: 'مشتری وفادار' },
   { value: '۵۴۰+', label: 'محصول اورجینال' },
   { value: '۴.۹', label: 'امتیاز رضایت' },
 ]
@@ -16,7 +16,7 @@ const STATS = [
 /** کلمه با ماسک reveal — برای انیمیشن staggered متن */
 function MaskedWord({ children, className = '' }) {
   return (
-    <span aria-hidden="true" className={`inline-block overflow-hidden align-bottom ${className}`}>
+    <span aria-hidden="true" className={`-my-1.5 inline-block overflow-hidden py-1.5 align-bottom ${className}`}>
       <span data-word className="inline-block">
         {children}
       </span>
@@ -32,7 +32,8 @@ export default function Hero() {
     () => {
       if (prefersReducedMotion()) return
 
-      const timeline = gsap.timeline({ defaults: { ease: 'power3.out' } })
+      // ورود هیرو تا پایان اینتروی لوگو صبر می‌کند (رویداد dian-intro:done)
+      const timeline = gsap.timeline({ defaults: { ease: 'power3.out' }, paused: true })
       timeline
         .from('[data-hero-badge]', { y: 20, opacity: 0, duration: 0.6 })
         .from(
@@ -49,6 +50,20 @@ export default function Hero() {
           { scale: 0.6, opacity: 0, duration: 0.7, stagger: 0.15, ease: 'back.out(1.8)' },
           '-=0.6',
         )
+
+      const startEntrance = () => timeline.play()
+      let removeIntroListener = null
+      if (document.documentElement.classList.contains('dian-intro-playing')) {
+        window.addEventListener('dian-intro:done', startEntrance, { once: true })
+        // شبکه‌ی ایمنی: اگر رویداد پایان اینترو به هر دلیل نرسید، هیرو برای همیشه مخفی نماند
+        const safety = setTimeout(startEntrance, 20000)
+        removeIntroListener = () => {
+          window.removeEventListener('dian-intro:done', startEntrance)
+          clearTimeout(safety)
+        }
+      } else {
+        startEntrance()
+      }
 
       // شناوری ملایم و بی‌پایان کارت‌های شیشه‌ای
       gsap.to('[data-hero-card]', {
@@ -104,8 +119,10 @@ export default function Hero() {
         return () => {
           element.removeEventListener('mousemove', onMove)
           element.removeEventListener('mouseleave', onLeave)
+          if (removeIntroListener) removeIntroListener()
         }
       }
+      return removeIntroListener
     },
     { scope: sectionRef },
   )
@@ -130,7 +147,7 @@ export default function Hero() {
             className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-4 py-2 text-xs font-bold text-gold-dark dark:text-gold"
           >
             <Sparkles size={14} />
-            کالکشن جدید پاییز ۱۴۰۴
+            کالکشن جدید پاییز ۱۴۰۵
           </span>
 
           <h1
@@ -140,7 +157,7 @@ export default function Hero() {
             <MaskedWord>تکنولوژی،</MaskedWord>{' '}
             <MaskedWord>به</MaskedWord>{' '}
             <MaskedWord>روایت</MaskedWord>{' '}
-            <MaskedWord className="pb-2 -mb-2">
+            <MaskedWord>
               <span className="relative inline-block text-gold">
                 لوکس
                 <span
@@ -193,6 +210,10 @@ export default function Hero() {
             data-hero-image
             src={heroProduct}
             alt="هدفون بی‌سیم ایرپادز مکس"
+            width="1000"
+            height="1000"
+            fetchPriority="high"
+            decoding="async"
             className="relative z-10 mx-auto w-full max-w-lg drop-shadow-2xl"
           />
 

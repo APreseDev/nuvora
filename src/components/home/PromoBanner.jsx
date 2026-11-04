@@ -93,7 +93,10 @@ export default function PromoBanner() {
                 data-promo-image
                 src={promoProduct}
                 alt="اسپیکر هوشمند اکو پلاس"
+                width="1000"
+                height="1000"
                 loading="lazy"
+                decoding="async"
                 className="w-full drop-shadow-[0_25px_45px_rgba(198,167,107,0.35)]"
               />
               <span

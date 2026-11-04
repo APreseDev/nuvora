@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import Container from '@/components/ui/Container'
 import { BRAND, NAV_LINKS } from '@/lib/constants'
 import { categories } from '@/data/categories'
+import { currentJalaliYear } from '@/lib/utils'
 
 const SOCIALS = [
   { icon: AtSign, label: 'اینستاگرام' },
@@ -33,6 +34,7 @@ export default function Footer() {
               <a
                 key={label}
                 href="#"
+                onClick={(event) => event.preventDefault()}
                 aria-label={label}
                 className="flex size-10 items-center justify-center rounded-full border border-cream/15 text-cream/70 transition-all duration-300 hover:border-gold hover:text-gold"
               >
@@ -63,7 +65,7 @@ export default function Footer() {
             {categories.map((category) => (
               <Link
                 key={category.id}
-                to="/products"
+                to={`/products?category=${category.id}`}
                 className="w-fit text-sm text-cream/70 transition-colors duration-300 hover:text-gold"
               >
                 {category.label}
@@ -93,7 +95,7 @@ export default function Footer() {
 
       <div className="border-t border-cream/10">
         <Container className="flex flex-col items-center justify-between gap-3 py-6 text-xs text-cream/50 sm:flex-row">
-          <span>© ۱۴۰۴ فروشگاه نوورا — تمامی حقوق محفوظ است.</span>
+          <span>© {currentJalaliYear()} فروشگاه نوورا — تمامی حقوق محفوظ است.</span>
           <span className="flex items-center gap-1.5">
             طراحی‌شده با
             <span aria-hidden="true" className="text-gold">◆</span>

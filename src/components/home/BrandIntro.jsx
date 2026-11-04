@@ -58,7 +58,10 @@ export default function BrandIntro() {
             data-brand-image
             src={brandProduct}
             alt="اسپیکر هوشمند هوم‌پاد مینی"
+            width="1000"
+            height="1000"
             loading="lazy"
+            decoding="async"
             className="relative z-10 mx-auto w-full max-w-sm drop-shadow-2xl"
           />
           <div
